@@ -20,7 +20,9 @@ export function Board({ xIsNext, player, squares, onPlay }) {
   }
 
   let inputString;
-  if (player == "human") {
+  if (winner) {
+    inputString = "Game over"
+  } else if (player == "human") {
     inputString = "Waiting on human input..."
   } else if (player == "bot") {
     inputString = "Bot is thinking"
@@ -29,9 +31,11 @@ export function Board({ xIsNext, player, squares, onPlay }) {
   }
 
   const handleClick = (i) => {
+    calculateWinner(setWinner)
+
     if (player == "bot" ||
       squares[i] ||
-      calculateWinner(setWinner)) {
+      winner) {
       return;
     }
 

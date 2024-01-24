@@ -4,6 +4,8 @@
 
 body {
   font-family: sans-serif;
+  background-color: #181818;
+  color: #818181;
   margin: 20px;
   padding: 0;
 }
@@ -57,7 +59,7 @@ body {
 }
 
 .square {
-  background: #fff;
+  background: #404040;
   border: 1px solid #999;
   float: left;
   font-size: 24px;

@@ -17,9 +17,6 @@ export function Game() {
       .then(() => get_board())
       .then(board => setSquares(board))
 
-    const p = xIsNext ? "1" : "2"
-    console.log(p + " just played")
-
     setXIsNext(!xIsNext);
   }
 
