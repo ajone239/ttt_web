@@ -70,7 +70,6 @@ type BoardResult struct {
 }
 
 func boardResultHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Checking board result")
 
 	board := globalGame.GetBoard()
 
