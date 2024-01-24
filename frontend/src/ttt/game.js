@@ -9,17 +9,12 @@ export function Game() {
   const [currentMove, setCurrentMove] = useState(0);
 
   const handlePlay = (nextMove) => {
-    f = async () => {
-      await play_move(nextMove)
+    play_move(nextMove)
+      .then(() => get_board())
+      .then(board => setSquares(board))
 
-      const board = await get_board()
-
-      setSquares(board)
-
-      setCurrentMove(currentMove + 1);
-      setXIsNext(!xIsNext);
-    }
-    f()
+    setCurrentMove(currentMove + 1);
+    setXIsNext(!xIsNext);
   }
 
 
@@ -37,8 +32,8 @@ export function Game() {
   );
 }
 
-async function play_move(move) {
-  await fetch('/api/play_move', {
+function play_move(move) {
+  return fetch('/api/play_move', {
     method: "POST",
     headers: {
       'Accept': 'application/json',
@@ -47,34 +42,35 @@ async function play_move(move) {
     body: JSON.stringify({
       move: move
     }),
-  }).catch(err => console.log(err))
-}
-
-async function get_board() {
-  const response = await fetch('/api/get_board')
-  const data = await response.json()
-  console.log(data)
-
-  const board = data.board.flat().map((s) => {
-    if (s == 0) {
-      return null
-    } else if (s == 1) {
-      return "O"
-    } else if (s == 2) {
-      return "X"
-    }
   })
-
-  console.log(board)
-
-  return board
+    .then(message => console.log(message))
+    .catch(err => console.log(err))
 }
 
-async function clear_game(setSquares) {
-  await fetch('/api/new_game')
+function get_board() {
+  return fetch('/api/get_board')
+    .then(response => response.json())
+    .then(data => {
+      const board = data.board.flat().map((s) => {
+        if (s == 0) {
+          return null
+        } else if (s == 1) {
+          return "O"
+        } else if (s == 2) {
+          return "X"
+        }
+      })
+
+      return board
+    }).catch(err => console.log(err))
+}
+
+function clear_game(setSquares) {
+  return fetch('/api/new_game')
+    .then(() => {
+      const board = get_board();
+
+      setSquares(board)
+    })
     .catch(err => console.log(err));
-
-  const board = await get_board();
-
-  setSquares(board)
 }

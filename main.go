@@ -20,6 +20,7 @@ func main() {
 	api.HandleFunc("/api/new_game", newBoardHandler)
 	api.HandleFunc("/api/get_board", getBoardHandler)
 	api.HandleFunc("/api/play_move", playMoveHandler)
+	api.HandleFunc("/api/board_result", boardResultHandler)
 	http.Handle("/api/", api)
 
 	http.ListenAndServe(":8080", nil)
@@ -61,4 +62,29 @@ func playMoveHandler(w http.ResponseWriter, r *http.Request) {
 	j := data.Move % 3
 
 	globalGame.PlayMove(i, j)
+}
+
+type BoardResult struct {
+	Terminal bool        `json:"terminal"`
+	Result   game.Square `json:"result"`
+}
+
+func boardResultHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Checking board result")
+
+	board := globalGame.GetBoard()
+
+	result := board.CheckForWin()
+
+	// Terminal if:
+	// - the result isn't blank: i.e. noughts or crosses won
+	// - the board is full: i.e. a draw or a win with a full board
+	terminal := result != game.Blank || board.IsFull()
+
+	boardResult := BoardResult{
+		Terminal: terminal,
+		Result:   result,
+	}
+
+	json.NewEncoder(w).Encode(boardResult)
 }
