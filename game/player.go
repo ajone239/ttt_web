@@ -7,7 +7,7 @@ import (
 
 type Player interface {
 	GetMove(board *Board) (int, int)
-  IsHuman() bool
+	IsHuman() bool
 }
 
 type HumanPlayer struct{}
@@ -15,7 +15,7 @@ type HumanPlayer struct{}
 var _ Player = (*HumanPlayer)(nil)
 
 func (p *HumanPlayer) IsHuman() bool {
-  return true
+	return true
 }
 
 func (p *HumanPlayer) GetMove(board *Board) (int, int) {
@@ -37,7 +37,7 @@ type RandomPlayer struct{}
 var _ Player = (*RandomPlayer)(nil)
 
 func (p *RandomPlayer) IsHuman() bool {
-  return false
+	return false
 }
 
 func (p *RandomPlayer) GetMove(board *Board) (int, int) {

@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { Square } from "./square";
 
-export function Board({ xIsNext, squares, onPlay }) {
+export function Board({ xIsNext, player, squares, onPlay }) {
 
   const [winner, setWinner] = useState(null)
 
@@ -19,8 +19,19 @@ export function Board({ xIsNext, squares, onPlay }) {
     status = "Next player: " + (xIsNext ? "X" : "O");
   }
 
+  let inputString;
+  if (player == "human") {
+    inputString = "Waiting on human input..."
+  } else if (player == "bot") {
+    inputString = "Bot is thinking"
+  } else {
+    inputString = "idk man..."
+  }
+
   const handleClick = (i) => {
-    if (squares[i] || calculateWinner(setWinner)) {
+    if (player == "bot" ||
+      squares[i] ||
+      calculateWinner(setWinner)) {
       return;
     }
 
@@ -47,6 +58,7 @@ export function Board({ xIsNext, squares, onPlay }) {
   return (
     <>
       <div className="status">{status}</div>
+      <div className="input-str">{inputString}</div>
       {board}
     </>
   );

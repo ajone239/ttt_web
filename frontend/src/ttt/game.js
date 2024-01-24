@@ -6,30 +6,47 @@ export function Game() {
 
   const [xIsNext, setXIsNext] = useState(true);
   const [squares, setSquares] = useState(Array(9).fill(null))
-  const [currentMove, setCurrentMove] = useState(0);
+
+  const player1 = "human"
+  const player2 = "bot"
+
+  const player = xIsNext ? player1 : player2
 
   const handlePlay = (nextMove) => {
     play_move(nextMove)
       .then(() => get_board())
       .then(board => setSquares(board))
 
-    setCurrentMove(currentMove + 1);
+    const p = xIsNext ? "1" : "2"
+    console.log(p + " just played")
+
     setXIsNext(!xIsNext);
+  }
+
+  if (player == "bot") {
+    get_bot_move(handlePlay)
   }
 
 
   return (
     <div className="game">
       <div className="game-board">
-        <Board xIsNext={xIsNext} squares={squares} onPlay={handlePlay} />
+        <Board xIsNext={xIsNext} player={player} squares={squares} onPlay={handlePlay} />
       </div>
-      <div className="">
-        <button onClick={() => clear_game(setSquares)}>
+      <div className="clear-button">
+        <button onClick={() => clear_game(setSquares, setXIsNext)}>
           Clear
         </button>
       </div>
     </div>
   );
+}
+
+function get_bot_move(handlePlay) {
+  fetch('/api/get_bot_move')
+    .then(response => response.json())
+    .then(data => handlePlay(data.move))
+    .catch(err => console.log(err))
 }
 
 function play_move(move) {
@@ -42,9 +59,7 @@ function play_move(move) {
     body: JSON.stringify({
       move: move
     }),
-  })
-    .then(message => console.log(message))
-    .catch(err => console.log(err))
+  }).catch(err => console.log(err))
 }
 
 function get_board() {
@@ -65,12 +80,13 @@ function get_board() {
     }).catch(err => console.log(err))
 }
 
-function clear_game(setSquares) {
+function clear_game(setSquares, setXIsNext) {
   return fetch('/api/new_game')
     .then(() => {
       const board = get_board();
 
       setSquares(board)
+      setXIsNext(true)
     })
     .catch(err => console.log(err));
 }

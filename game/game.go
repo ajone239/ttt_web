@@ -9,12 +9,16 @@ const (
 )
 
 type Game struct {
+	player1  *Player
+	player2  *Player
 	board    *Board
 	whosTurn Square
 }
 
-func NewGame() *Game {
+func NewGame(p1, p2 *Player) *Game {
 	return &Game{
+		player1:  p1,
+		player2:  p2,
 		board:    NewBoard(),
 		whosTurn: Cross,
 	}
@@ -27,6 +31,17 @@ func (g *Game) ClearGame() {
 
 func (g *Game) GetBoard() Board {
 	return *g.board
+}
+
+func (g *Game) GetMove() (int, int) {
+	var player *Player
+
+	if g.whosTurn == Cross {
+		player = g.player1
+	} else {
+		player = g.player2
+	}
+	return (*player).GetMove(g.board)
 }
 
 func (g *Game) PlayMove(i, j int) {

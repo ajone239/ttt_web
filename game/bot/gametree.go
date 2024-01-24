@@ -2,7 +2,7 @@ package bot
 
 import (
 	"fmt"
-	"github.com/ajone239/tic_tac_toe/game"
+	"github.com/ajone239/ttt_web/game"
 )
 
 /*

@@ -6,9 +6,12 @@ import (
 	"net/http"
 
 	"github.com/ajone239/ttt_web/game"
+	"github.com/ajone239/ttt_web/game/bot"
 )
 
-var globalGame = game.NewGame()
+var player1 game.Player = &game.HumanPlayer{}
+var player2 game.Player = bot.NewBotPlayer(2, false)
+var globalGame = game.NewGame(&player1, &player2)
 
 func main() {
 	// Static files
@@ -21,6 +24,7 @@ func main() {
 	api.HandleFunc("/api/get_board", getBoardHandler)
 	api.HandleFunc("/api/play_move", playMoveHandler)
 	api.HandleFunc("/api/board_result", boardResultHandler)
+	api.HandleFunc("/api/get_bot_move", getBotMoveHandler)
 	http.Handle("/api/", api)
 
 	http.ListenAndServe(":8080", nil)
@@ -62,6 +66,18 @@ func playMoveHandler(w http.ResponseWriter, r *http.Request) {
 	j := data.Move % 3
 
 	globalGame.PlayMove(i, j)
+}
+
+func getBotMoveHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Got a get bot move")
+
+	i, j := globalGame.GetMove()
+
+	moveData := Move{
+		Move: (i * 3) + j,
+	}
+
+	json.NewEncoder(w).Encode(moveData)
 }
 
 type BoardResult struct {
