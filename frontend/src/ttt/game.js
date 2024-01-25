@@ -6,29 +6,25 @@ export function Game() {
 
   const [xIsNext, setXIsNext] = useState(true);
   const [squares, setSquares] = useState(Array(9).fill(null))
-
-  const player1 = "human"
-  const player2 = "bot"
-
-  const player = xIsNext ? player1 : player2
+  const [currentMove, setCurrentMove] = useState(0);
 
   const handlePlay = (nextMove) => {
     play_move(nextMove)
       .then(() => get_board())
-      .then(board => setSquares(board))
+      .then(board => {
+        setXIsNext(!xIsNext)
+        setCurrentMove(currentMove + 1)
+        setSquares(board)
+        console.log("test1")
+      })
+    console.log("test2")
 
-    setXIsNext(!xIsNext);
   }
-
-  if (player == "bot") {
-    get_bot_move(handlePlay)
-  }
-
 
   return (
     <div className="game">
       <div className="game-board">
-        <Board xIsNext={xIsNext} player={player} squares={squares} onPlay={handlePlay} />
+        <Board xIsNext={xIsNext} currentMove={currentMove} squares={squares} onPlay={handlePlay} />
       </div>
       <div className="clear-button">
         <button onClick={() => clear_game(setSquares, setXIsNext)}>
@@ -37,13 +33,6 @@ export function Game() {
       </div>
     </div>
   );
-}
-
-function get_bot_move(handlePlay) {
-  fetch('/api/get_bot_move')
-    .then(response => response.json())
-    .then(data => handlePlay(data.move))
-    .catch(err => console.log(err))
 }
 
 function play_move(move) {

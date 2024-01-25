@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Square } from "./square";
+import { HumanPlayer, BotPlayer } from "./player"
 
-export function Board({ xIsNext, player, squares, onPlay }) {
+export function Board({ xIsNext, currentMove, squares, onPlay }) {
 
   const [winner, setWinner] = useState(null)
 
@@ -19,12 +20,32 @@ export function Board({ xIsNext, player, squares, onPlay }) {
     status = "Next player: " + (xIsNext ? "X" : "O");
   }
 
+  const player1_str = "human"
+  const player1 = new HumanPlayer(0, onPlay)
+
+  const player2_str = "bot"
+  const player2 = new BotPlayer(1, onPlay)
+
+  const player_str = xIsNext ? player1_str : player2_str
+
+  useEffect(() => {
+    if (winner) {
+      return;
+    }
+    console.log("test3")
+    if (xIsNext) {
+      player1.notify()
+    } else {
+      player2.notify()
+    }
+  }, [xIsNext])
+
   let inputString;
   if (winner) {
     inputString = "Game over"
-  } else if (player == "human") {
+  } else if (player_str == "human") {
     inputString = "Waiting on human input..."
-  } else if (player == "bot") {
+  } else if (player_str == "bot") {
     inputString = "Bot is thinking"
   } else {
     inputString = "idk man..."
@@ -33,7 +54,7 @@ export function Board({ xIsNext, player, squares, onPlay }) {
   const handleClick = (i) => {
     calculateWinner(setWinner)
 
-    if (player == "bot" ||
+    if (player_str == "bot" ||
       squares[i] ||
       winner) {
       return;
