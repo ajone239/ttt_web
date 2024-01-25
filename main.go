@@ -71,6 +71,13 @@ func playMoveHandler(w http.ResponseWriter, r *http.Request) {
 func getBotMoveHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Got a get bot move")
 
+	board := globalGame.GetBoard()
+
+	if board.IsFull() {
+		json.NewEncoder(w).Encode(nil)
+		return
+	}
+
 	i, j := globalGame.GetMove()
 
 	moveData := Move{

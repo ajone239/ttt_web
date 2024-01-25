@@ -72,10 +72,6 @@ func (p *BotPlayer) GetMove(board *game.Board) (int, int) {
 		fmt.Println("Best move:", best_move, "Eval:", best_eval)
 	}
 
-	if !board.CheckGoodMove(best_move.i, best_move.j) {
-		panic("Bad move")
-	}
-
 	if p.debug {
 		fmt.Println()
 		fmt.Println("**********")
